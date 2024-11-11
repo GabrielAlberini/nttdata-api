@@ -22,6 +22,8 @@ const addProduct = async (req, res) => {
   } catch (error) {
     if (error.name === "ZodError") {
       res.status(400).json({ message: "Datos de entrada inválidos", errors: error.errors })
+    } else {
+      res.status(500).json({ message: "Error al crear un producto", error: error.message })
     }
   }
 }
