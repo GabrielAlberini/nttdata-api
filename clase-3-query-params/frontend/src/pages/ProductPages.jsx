@@ -2,20 +2,23 @@ import { useState, useEffect } from "react"
 import { getProducts, addProduct, updateProduct, deleteProduct } from "../api/productApi"
 import { ProductForm } from "../components/ProductForm"
 import { ProductList } from "../components/ProductList"
+import { ProductFilter } from "../components/ProductFilter"
 
 const ProductPage = () => {
   const [products, setProducts] = useState([])
   const [productToEdit, setProductToEdit] = useState(null)
 
-  const loadProducts = async () => {
-    const data = await getProducts()
+  const [filter, setFilter] = useState({})
+
+  const loadProducts = async (filterParams = {}) => {
+    const data = await getProducts(filterParams)
     console.log(data)
     setProducts(data)
   }
 
   useEffect(() => {
-    loadProducts()
-  }, [])
+    loadProducts(filter)
+  }, [filter])
 
 
   const handleEditProduct = (product) => {
@@ -37,14 +40,18 @@ const ProductPage = () => {
     } else {
       await addProduct(product)
     }
-    loadProducts()
+    loadProducts(filter)
+  }
+
+  const handleFilterChange = (newFilters) => {
+    setFilter(newFilters)
   }
 
   return (
     <div className="container p-3">
+      <ProductFilter onFilter={handleFilterChange} />
       <div className="columns">
         <div className="column">
-
           <ProductForm onSubmit={handleAddProduct} productToEdit={productToEdit} />
         </div>
         <div className="column">
